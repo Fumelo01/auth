@@ -3,13 +3,17 @@ const router = express.Router();
 const { check } = require('express-validator');
 const { authUser } = require('../middleware/auth');
 const userController = require('../controllers/userController.js');
+const auth = require('../middleware/auth');
 
 
 
-
-//Registeration route
+// Registeration route
+// Public
 router.post('/signup', userController.registerNewUser);
-//Login user route
+
+
+// Login user route
+// Public
 router.post('/login',
   [
     check("email", "Please enter a valid mailing address").isEmail(),
@@ -17,19 +21,64 @@ router.post('/login',
   ],
   userController.loginUser
 );
-router.post('/logout', userController.logoutUser);
-//Get logged-in user
-//router.get('/', authUser, userController.getLoggedInUser);
-router.get('/me', authUser, userController.me);
-router.get('/accounts', userController.allAccounts);
-router.get('/accounts/users', userController.allUsers);
-router.get('/accounts/staff', userController.allStaff);
-router.get('/accounts/managers', userController.allManagers);
+
+
+// Logout user
+//Generally protected
+router.patch('/logout', auth.authUser, userController.logoutUser);
+
+
+// Get logged-in user
+// router.get('/', authUser, userController.getLoggedInUser);
+
+// Fetches own data
+// Generally protected route
+router.get('/me', auth.authUser, userController.me);
+
+
+// Get all userAccounts
+// Admin
+router.get('/accounts', auth.authAdmin, userController.allAccounts);
+
+
+// Get all Users
+// Staff
+router.get('/accounts/users', auth.authStaff, userController.allUsers);
+
+
+// Get all Staff
+// Managers
+router.get('/accounts/staff', auth.authManager, userController.allStaff);
+
+
+// Get all Managers
+// Managers
+router.get('/accounts/managers', auth.authManager, userController.allManagers);
+
+
 //router.post('/accounts/admin', userController.allAdmin);
-router.get('/accounts/id:', userController.userById);
+
+
+// Get userAccount by id
+// Admin
+router.get('/accounts/id:', auth.authAdmin, userController.userById);
+
+
 //router.patch('/me', userController.editMe);
-router.patch('/reset', userController.resetPassword);
-router.delete('/accounts/id:', userController.delUser);
+
+
+// Get reset token
+// public
+router.post('/reset', userController.resetToken);
+
+// Reset Password
+// Reset Access Token
+router.patch('/reset', auth.authRat, userController.resetPassword);
+
+
+// Delete user by id
+// Admin
+router.delete('/accounts/id:', auth.authAdmin, userController.delUser);
 
 
 

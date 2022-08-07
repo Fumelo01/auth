@@ -4,8 +4,27 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require ('bcryptjs')
 require('dotenv').config();
 const { SECRET } = process.env
+const nodemailer = require('nodemailer')
 
 
+
+
+
+
+
+
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+        clientId: process.env.OAUTH_CLIENTID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN
+    }
+});
 
 
 
@@ -15,7 +34,7 @@ exports.me = (req, res) => {
     let splitHeader = req.headers.authorization.split(' ')
     let token = splitHeader[1]
     const decode = jwt.verify(token, SECRET)
-    User.findOne({_id: decode.user.id}, {password: 0, isStaff: 0, isManager: 0, isAdmin: 0}, (err, me) => {
+    User.findOne({_id: decode.user.id}, {access: 0,password: 0, isStaff: 0, isManager: 0, isAdmin: 0}, (err, me) => {
       if (err) throw err;
       res.json({myDetails: me})
     })
@@ -213,17 +232,68 @@ exports.logoutUser = async (req, res) => {
     const decode = jwt.verify(token, SECRET)
     const id = {_id : decode.user.id}
     let edit = await {
-      access: 0
+      access: false
     }
     let update = await User.findOneAndUpdate(id, edit, {new: true})
-    console.log({success: `Your data has successfully been updated`})
-    res.send({success:`Your data has successfully been updated`, Update: update})
+    console.log({success: `You have successfully logged out`})
+    res.send({success:`You have successfully logged out`})
   } catch {
     console.log({Error: err})
     res.status(500).json({Error: err})
   }
 }
 
+
+// Get reset token
+exports.resetToken = async (req, res) => {
+  // Get email from request body
+  console.log(req.body.email)
+  let email = { email: req.body.email }
+  // Check if email is registered
+  User.findOne(email, (err, found)=> {
+    if (err) throw err;
+    if (!found) {
+      console.error({Error: `Oops! email: ${req.body.email} does not exist `})
+      return res.status(404).json({Error: `Oops! User with email: ${req.body.email} does not exist `})
+    }
+    console.log({success: `The ${found.userRole}, ${found.lastName} ${found.firstName} has successfully been found`})
+//    console.log({foundUser: found}, {password: 0, isStaff: 0, isManager: 0, isAdmin: 0})
+    // Get id for User with email
+    // Create jwt with password reset access
+    const payload = {
+      email: req.body.email,
+      id: found._id,
+      reset: true
+    }
+    jwt.sign(
+      payload,
+      SECRET,
+      {
+        expiresIn: 300
+      },
+      (err, token) => {
+        if (err) throw err;
+        // Send token to email
+        let mailOptions = {
+          from: process.env.MAIL_USERNAME,
+          to: req.body.email,
+          subject: 'Password Reset Token',
+          text: 'Use the token below to reset your password\n\n' + token + '\n\nToken is only valid for 5 minutes'
+        }
+        transporter.sendMail(mailOptions, (err, data)=> {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log({message: 'Email sent sucessfully, more info below'});
+            console.log(data);
+           return  res.json({ message: 'A password reset token has been sent to your Email'})
+          }
+        });
+      }
+    )
+  });
+
+}
 
 
 // Reset password
@@ -322,6 +392,7 @@ exports.registerNewUser = (req, res) => {
             const payload = {
               user: {
                 id: user.id,
+                access: user.access,
                 userRole: user.userRole
               }
             };
@@ -410,7 +481,7 @@ exports.loginUser = async (req, res) => {
     // there is a match, set access to true
     const id = {_id : user.id}
     let edit = await {
-      access: 1
+      access: true
     }
     let update = await User.findOneAndUpdate(id, edit, {new: true})
     // send token
@@ -419,6 +490,7 @@ exports.loginUser = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        access: user.access,
         userRole: user.userRole
       }
     };
@@ -431,18 +503,10 @@ exports.loginUser = async (req, res) => {
       },
       (err, token) => {
         if (err) throw err;
+        console.log(`\nLogin Token\n\n${token}\n`)
         res.json({
           statusCode: 200,
           message: "User Logged in sucessfully",
-          user: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            userRole: user.userRole,
-            isStaff: user.isStaff,
-            isManager: user.isManager,
-            isAdmin: user.isAdmin
-          },
           token
         })
       }

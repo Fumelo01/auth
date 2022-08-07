@@ -10,7 +10,7 @@ const app = express();
 app.use(json());
 
 app.use('/', flightRoute)
-app.use("/auth", authRoute);
+app.use("/", authRoute);
 
 const port = process.env.PORT || 3000;
 
