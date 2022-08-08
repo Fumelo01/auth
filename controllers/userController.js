@@ -262,14 +262,13 @@ exports.resetToken = async (req, res) => {
     // Create jwt with password reset access
     const payload = {
       email: req.body.email,
-      id: found._id,
       reset: true
     }
     jwt.sign(
       payload,
       SECRET,
       {
-        expiresIn: 300
+        expiresIn: 900
       },
       (err, token) => {
         if (err) throw err;
@@ -278,7 +277,7 @@ exports.resetToken = async (req, res) => {
           from: process.env.MAIL_USERNAME,
           to: req.body.email,
           subject: 'Password Reset Token',
-          text: 'Use the token below to reset your password\n\n' + token + '\n\nToken is only valid for 5 minutes'
+          text: 'Use the token below to reset your password\n\n' + token + '\n\nToken is only valid for 15 minutes'
         }
         transporter.sendMail(mailOptions, (err, data)=> {
           if (err) {
@@ -286,6 +285,7 @@ exports.resetToken = async (req, res) => {
           } else {
             console.log({message: 'Email sent sucessfully, more info below'});
             console.log(data);
+            console.log(`\n\n${token}\n\n`)
            return  res.json({ message: 'A password reset token has been sent to your Email'})
           }
         });
@@ -302,24 +302,25 @@ exports.resetPassword = async (req, res) => {
     let splitHeader = req.headers.authorization.split(' ')
     let token = splitHeader[1]
     const decode = jwt.verify(token, SECRET)
-    const id = {_id : decode.user.id}
+    const email = {email : decode.email}
+    console.log(decode)
       // Hash user's password
       bcrypt.genSalt(10, (err, salt) => {
         if (err) {
           return res.status(500).json({err});
         }
-        bcrypt.hash(req.body.password, salt, (err, hashedPassword) => {
+        bcrypt.hash(req.body.password, salt, async (err, hashedPassword) => {
           if (err) {
             return res.status(500).json({err})
           }
           // Save password to db
           let edit = {password: hashedPassword};
-          let update =  User.findOneAndUpdate(id, edit, {new: true})
+          let update = await User.findOneAndUpdate(email, edit, {new: true})
           console.log({success: `Your password has successfully been updated`})
           res.send({success:`Your password has successfully been updated`})
         })
       })
-  } catch {
+  } catch (err) {
     console.log({Error: err})
     res.status(500).json({Error: err})
   }
@@ -391,9 +392,9 @@ exports.registerNewUser = (req, res) => {
             // Create jwt for user
             const payload = {
               user: {
-                id: user.id,
-                access: user.access,
-                userRole: user.userRole
+                id: newUser.id,
+                access: newUser.access,
+                userRole: newUser.userRole
               }
             };
 
