@@ -12,10 +12,10 @@
 >>  ###### *Hugs* and *Kisses*, 💜🤗***Adenuga Oluwafunmilayo***😘💜
 ---
 > ##### With what we have here, you can signup as a user(alone), a staff, a manager, and an admin. These roles rank from the lowest to the highest respectively. I'd explain briefly below.
->> Every registered account is a user.
->> Every staff can perform user and staff duties, but cannot perform manager or admin duties.
->> Every Manager can perform user, staff and Manager duties, but cannot perform Admin duties.
->> Any Admin can perform any duty. Only the admin has Complete access to all routes.
+>> - ###### Every registered account is a user.
+>> - ###### Every staff can perform user and staff duties, but cannot perform manager or admin duties.
+>> - ###### Every Manager can perform user, staff and Manager duties, but cannot perform Admin duties.
+>> - ###### Any Admin can perform any duty. Only the admin has Complete access to all routes.
 
 ---
 ---
