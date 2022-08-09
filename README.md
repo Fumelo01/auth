@@ -86,13 +86,21 @@
       This time, it worked.
 ![All Managers](models/images/allAccounts.jpg)
 > ##### Fetch all Managers Route http://localhost:3000/accounts/managers
-      This route fetches an array of accounts in the application. 
-      It is only accessible to Admin accounts. 
+      This route fetches an array of manager accounts in the application. 
+      The least it is accessible to is a Manager account. 
       Required header is Authorization: Bearer <logintoken>
       Logged in to an Manager's account.
 ![Admin](models/images/manager.jpg)
       It works.
 ![All Managers](models/images/allManagers.jpg)
+> ##### Fetch all Managers Route http://localhost:3000/accounts/users
+      This route fetches an array of user accounts in the application.
+      The least it is accessible to is a Staff account.
+      Required header is Authorization: Bearer <logintoken>
+      Logged in to an Staff account.
+![Admin](models/images/staff.jpg)
+      It works.
+![All Managers](models/images/allUsers.jpg)
 
 ---
 ---
