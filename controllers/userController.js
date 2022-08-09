@@ -34,7 +34,7 @@ exports.me = (req, res) => {
     let splitHeader = req.headers.authorization.split(' ')
     let token = splitHeader[1]
     const decode = jwt.verify(token, SECRET)
-    User.findOne({_id: decode.user.id}, {access: 0,password: 0, isStaff: 0, isManager: 0, isAdmin: 0}, (err, me) => {
+    User.findOne({_id: decode.user.id}, {__v: 0,access: 0,password: 0, isStaff: 0, isManager: 0, isAdmin: 0}, (err, me) => {
       if (err) throw err;
       res.json({myDetails: me})
     })
@@ -53,7 +53,7 @@ exports.allAccounts = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
     // execute query with page and limit values
-    const posts = await User.find()
+    const posts = await User.find({}, {password: 0, __v: 0})
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -80,7 +80,7 @@ exports.allUsers = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
     // execute query with page and limit values
-    const posts = await User.find({userRole: 'user'})
+    const posts = await User.find({userRole: 'User'}, {password: 0, __v: 0})
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -107,7 +107,7 @@ exports.allStaff = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
     // execute query with page and limit values
-    const posts = await User.find({userRole: 'staff'})
+    const posts = await User.find({userRole: 'Staff'}, {password: 0, __v: 0})
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -134,7 +134,7 @@ exports.allManagers = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
     // execute query with page and limit values
-    const posts = await User.find({userRole: 'manager'})
+    const posts = await User.find({userRole: 'Manager'}, {password: 0, __v: 0})
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -161,7 +161,7 @@ exports.allAdmins = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
     // execute query with page and limit values
-    const posts = await User.find({userRole: 'admin'})
+    const posts = await User.find({userRole: 'Admin'}, {password: 0, __v: 0})
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -185,7 +185,7 @@ exports.allAdmins = async (req, res) => {
 exports.userById = (req, res) => {
   try {
     let id = {_id : req.params.id}
-    User.findOne(id, (err, found)=> {
+    User.findOne(id, {password: 0, __v: 0}, (err, found)=> {
       if (err) throw err;
       if (!found) {
         console.log({Error: `Oops! User with _id: ${req.params.id} does not exist `})
@@ -213,7 +213,7 @@ exports.editUser = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email
     }
-    let update = await User.findOneAndUpdate(id, edit, {new: true})
+    let update = await User.findOneAndUpdate(id, {password: 0, __v: 0}, edit, {new: true})
     console.log({success: `Your data has successfully been updated`})
     res.send({success:`Your data has successfully been updated`, Update: update})
   } catch {
@@ -236,7 +236,7 @@ exports.logoutUser = async (req, res) => {
     }
     let update = await User.findOneAndUpdate(id, edit, {new: true})
     console.log({success: `You have successfully logged out`})
-    res.send({success:`You have successfully logged out`})
+    res.send({success:`You, ${update.firstName} have successfully logged out`})
   } catch {
     console.log({Error: err})
     res.status(500).json({Error: err})
@@ -328,7 +328,7 @@ exports.resetPassword = async (req, res) => {
 
 
 
-// Delete user
+// Delete user by id
 exports.delUser = async (req, res) => {
   try {
     let id = {_id : req.params.id}
@@ -374,6 +374,25 @@ exports.registerNewUser = (req, res) => {
       if (err) {
         return res.status(500).json({err})
       }
+      let str = req.body.userRole.toLowerCase()
+      if (str == 'staff') {
+        newUser.userRole = 'Staff';
+        newUser.isStaff = 1;
+        newUser.save();
+      }
+      if (str == 'manager') {
+        newUser.userRole = 'Manager';
+        newUser.isStaff = 1;
+        newUser.isManager = 1;
+        newUser.save();
+      }
+      if (str == 'admin') {
+        newUser.userRole = 'Admin';
+        newUser.isStaff = 1;
+        newUser.isManager = 1;
+        newUser.isAdmin =1;
+        newUser.save();
+      }
       // Hash user's password
       bcrypt.genSalt(10, (err, salt) => {
         if (err) {
@@ -389,31 +408,10 @@ exports.registerNewUser = (req, res) => {
             if (err) {
               return res.status(500).json({err})
             }
-            // Create jwt for user
-            const payload = {
-              user: {
-                id: newUser.id,
-                access: newUser.access,
-                userRole: newUser.userRole
-              }
-            };
-
-            jwt.sign(
-              payload,
-              SECRET,
+            // Send token to user
+            return res.status(200).json(
               {
-                expiresIn: 3600
-              },
-              (err, token) => {
-                if (err) {
-                  return res.status(500).json({err})
-                }
-                // Send token to user
-                return res.status(200).json(
-                  {
-                    message: 'user registeration complete',
-                    token
-                  })
+                message: `New ${newUser.userRole} Registeration complete. You can now proceed to login.`
               }
             )
           })
@@ -425,7 +423,7 @@ exports.registerNewUser = (req, res) => {
 
 
 // update own data
-exports.editUser = async (req, res) => {
+exports.editMe = async (req, res) => {
   try {
     let splitHeader = req.headers.authorization.split(' ')
     let token = splitHeader[1]
@@ -504,7 +502,7 @@ exports.loginUser = async (req, res) => {
       },
       (err, token) => {
         if (err) throw err;
-        console.log(`\nLogin Token\n\n${token}\n`)
+        console.log(`\n${update.userRole} Login Token\n\n${token}\n`)
         res.json({
           statusCode: 200,
           message: "User Logged in sucessfully",

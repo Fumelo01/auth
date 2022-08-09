@@ -7,12 +7,12 @@ const auth = require('../middleware/auth');
 
 
 
-// Registeration route
+// Registeration route          √
 // Public
 router.post('/signup', userController.registerNewUser);
 
 
-// Login user route
+// Login user route             √
 // Public
 router.post('/login',
   [
@@ -23,35 +23,33 @@ router.post('/login',
 );
 
 
-// Logout user
+// Logout user                  √
 //Generally protected
 router.patch('/logout', auth.authUser, userController.logoutUser);
 
 
-// Get logged-in user
-// router.get('/', authUser, userController.getLoggedInUser);
 
-// Fetches own data
+// Fetches own data             √
 // Generally protected route
 router.get('/me', auth.authUser, userController.me);
 
 
-// Get all userAccounts
+// Get all userAccounts         √
 // Admin
 router.get('/accounts', auth.authAdmin, userController.allAccounts);
 
 
-// Get all Users
+// Get all Users                
 // Staff
 router.get('/accounts/users', auth.authStaff, userController.allUsers);
 
 
-// Get all Staff
+// Get all Staff                
 // Managers
 router.get('/accounts/staff', auth.authManager, userController.allStaff);
 
 
-// Get all Managers
+// Get all Managers             √
 // Managers
 router.get('/accounts/managers', auth.authManager, userController.allManagers);
 
@@ -59,7 +57,7 @@ router.get('/accounts/managers', auth.authManager, userController.allManagers);
 //router.post('/accounts/admin', userController.allAdmin);
 
 
-// Get userAccount by id
+// Get userAccount by id        
 // Admin
 router.get('/accounts/id:', auth.authAdmin, userController.userById);
 
@@ -67,16 +65,16 @@ router.get('/accounts/id:', auth.authAdmin, userController.userById);
 //router.patch('/me', userController.editMe);
 
 
-// Get reset token
+// Get reset token              √
 // public
 router.post('/reset', userController.resetToken);
 
-// Reset Password
-// Reset Access Token
+// Reset Password               √
+// RAT
 router.patch('/reset', auth.authRat, userController.resetPassword);
 
 
-// Delete user by id
+// Delete user by id            
 // Admin
 router.delete('/accounts/id:', auth.authAdmin, userController.delUser);
 

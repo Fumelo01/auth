@@ -26,7 +26,7 @@
 ---
 #### Public Access Routes
 > ##### Signup or Register Route http://localhost:3000/signup/
-      This is to register an account in the application. Required fields are email, password, first name and last name.
+      This is to register an account in the application. Required fields are email, password, firstName and lastName. Optional field is userRole, The default userRole is User.
 ![mine](models/images/signup.jpg) 
 > ##### Login Route http://localhost:3000/login/
       This is to login to an account in the application. Required fields are email and password. Upon login, you will receive a token which grants you access according to your user role.
@@ -53,7 +53,20 @@
 #### Role Based Authentication
 > ##### Fetch all accounts Route http://localhost:3000/accounts/
       This route fetches an array of accounts in the application. It is only accessible to Admin accounts. Required header is Authorization: Bearer <logintoken>
+      I tried with a User account, The result is below.
 ![mine](models/images/rba.jpg) 
+      Logged in to an Admin's account.
+![Admin](models/images/admin.jpg)
+      This time, it worked.
+![All Managers](models/images/allAccounts.jpg)
+> ##### Fetch all Managers Route http://localhost:3000/accounts/managers
+      This route fetches an array of accounts in the application. It is only accessible to Admin
+    accounts. Required header is Authorization: Bearer <logintoken>
+      Logged in to an Manager's account.
+![Admin](models/images/managerjpg)
+      It works.
+![All Managers](models/images/allManagers.jpg)
+
 ---
 ---
 ## **GETTING THE AUTHENTICATION PROGRAM TO WORK IN THREE EASY STEPS** 🪜🪜🪜

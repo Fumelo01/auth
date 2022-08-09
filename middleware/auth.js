@@ -32,7 +32,6 @@ exports.authUser = (req, res, next) => {
     let token = splitHeader[1]
     const decoded = (jwt.verify(token, SECRET))
     console.log({here: decoded})
-   // const user = User.findOne({_id: decoded.user.id})
     let id = {_id : decoded.user.id}
     User.findOne(id, (err, found)=> {
       if (err) throw err;
