@@ -32,7 +32,7 @@
       This is to login to an account in the application. Required fields are email and password. Upon login, you will receive a token which grants you access according to your user role.
 ![mine](models/images/login.jpg) 
 > ##### Get Reset Token Route http://localhost:3000/reset/
-      This is to apply for a password reset token in an account in the application. Required field is email. Upon success, a token will be sent to the provided email address which can be used to reset the password.
+>      This is to apply for a password reset token in an account in the application. Required field is email. Upon success, a token will be sent to the provided email address which can be used to reset the password.
 ![mine](models/images/rat.jpg) 
 ![mine](models/images/mail.jpg) 
       I later changed the reset password token validation time to 15mins, as it took a while for me to receive my mail.
