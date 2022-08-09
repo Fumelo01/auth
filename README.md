@@ -26,33 +26,59 @@
 ---
 #### Public Access Routes
 > ##### Signup or Register Route http://localhost:3000/signup/
-      This is to register an account in the application. Required fields are email, password, firstName and lastName. Optional field is userRole, The default userRole is User.
+      This is to register an account in the application. 
+      Required fields are email, password, firstName and lastName. 
+      Optional field is userRole, The default userRole is User.
+      ```
+      {
+        "email" : "input your email here",
+        "password" : "input your password here",
+        "firstName" : "input your first name here",
+        "lastName" : "input your last name here",
+        "userRole" : "any of 'User', 'Staff', 'Manager' or 'Admin' "
+      }
+      ```
 ![mine](models/images/signup.jpg) 
 > ##### Login Route http://localhost:3000/login/
-      This is to login to an account in the application. Required fields are email and password. Upon login, you will receive a token which grants you access according to your user role.
+      This is to login to an account in the application. 
+      Required fields are email and password. 
+      Upon login, you will receive a token which 
+      grants you access according to your user role.
 ![mine](models/images/login.jpg) 
 > ##### Get Reset Token Route http://localhost:3000/reset/
->      This is to apply for a password reset token in an account in the application. Required field is email. Upon success, a token will be sent to the provided email address which can be used to reset the password.
+      This is to apply for a password reset token 
+      in an account in the application. 
+      Required field is email. 
+      Upon success, a token will be sent to the provided email 
+      address which can be used to reset the password.
 ![mine](models/images/rat.jpg) 
 ![mine](models/images/mail.jpg) 
-      I later changed the reset password token validation time to 15mins, as it took a while for me to receive my mail.
+      I later changed the reset password token validation time to 15mins, 
+      as it took a while for me to receive my mail.
 ---
 #### Generally Protected Routes
-> ##### Reset Password Route http://localhost:3000/reset/
-      This is to reset an account's password in the application. Required header is Authorization: Bearer <resettoken>, Required field is Password
-![mine](models/images/resetPassword.jpg) 
-![mine](models/images/confirmPassword.jpg) 
 > ##### Get own details Route http://localhost:3000/me/
-      This is to register an account in the application. Required header is Authorization: Bearer <logintoken>
+      This is to register an account in the application. 
+      Required header is Authorization: Bearer <logintoken>
 ![mine](models/images/gpr.jpg) 
 > ##### Logout Route http://localhost:3000/logout/
-      This is to logout of an account in the application. Required header is Authorization: Bearer <logintoken>
+      This is to logout of an account in the application. 
+      Required header is Authorization: Bearer <logintoken>
 ![mine](models/images/logout.jpg)
 ![mine](models/images/confirmLogout.jpg)
 ---
 #### Role Based Authentication
+> ##### Reset Password Route http://localhost:3000/reset/
+      This is to reset an account's password in the application. 
+      It is only accessible to clients with the Reset Access token.
+      Required header is Authorization: Bearer <resettoken>, 
+      Required field is password
+![mine](models/images/resetPassword.jpg) 
+![mine](models/images/confirmPassword.jpg) 
 > ##### Fetch all accounts Route http://localhost:3000/accounts/
-      This route fetches an array of accounts in the application. It is only accessible to Admin accounts. Required header is Authorization: Bearer <logintoken>
+      This route fetches an array of accounts in the application. 
+      It is only accessible to Admin accounts. 
+      Required header is Authorization: Bearer <logintoken>
       I tried with a User account, The result is below.
 ![mine](models/images/rba.jpg) 
       Logged in to an Admin's account.
@@ -60,8 +86,9 @@
       This time, it worked.
 ![All Managers](models/images/allAccounts.jpg)
 > ##### Fetch all Managers Route http://localhost:3000/accounts/managers
-      This route fetches an array of accounts in the application. It is only accessible to Admin
-    accounts. Required header is Authorization: Bearer <logintoken>
+      This route fetches an array of accounts in the application. 
+      It is only accessible to Admin accounts. 
+      Required header is Authorization: Bearer <logintoken>
       Logged in to an Manager's account.
 ![Admin](models/images/manager.jpg)
       It works.
