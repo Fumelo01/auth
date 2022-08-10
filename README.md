@@ -58,7 +58,8 @@
 ---
 #### Generally Protected Routes
 > ##### Get own details Route http://localhost:3000/me/
-      This is to register an account in the application. 
+      This is to fetch the details of the currently 
+      logged-in account in the application. 
       Required header is Authorization: Bearer <logintoken>
 ![mine](models/images/gpr.jpg) 
 > ##### Logout Route http://localhost:3000/logout/
