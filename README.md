@@ -75,7 +75,7 @@
       Required field is password
 ![mine](models/images/resetPassword.jpg) 
 ![mine](models/images/confirmPassword.jpg) 
-> ##### Fetch all accounts Route http://localhost:3000/accounts/
+> ##### Fetch all Accounts Route http://localhost:3000/accounts/
       This route fetches an array of accounts in the application. 
       It is only accessible to Admin accounts. 
       Required header is Authorization: Bearer <logintoken>
@@ -93,7 +93,7 @@
 ![Admin](models/images/manager.jpg)
       It works.
 ![All Managers](models/images/allManagers.jpg)
-> ##### Fetch all Managers Route http://localhost:3000/accounts/users
+> ##### Fetch all Users Route http://localhost:3000/accounts/users
       This route fetches an array of user accounts in the application.
       The least it is accessible to is a Staff account.
       Required header is Authorization: Bearer <logintoken>
