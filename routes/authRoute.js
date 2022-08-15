@@ -30,7 +30,7 @@ router.patch('/logout', auth.authUser, userController.logoutUser);
 
 
 // Fetches own data             √
-// Generally protected route
+// Generally protected 
 router.get('/me', auth.authUser, userController.me);
 
 
@@ -39,12 +39,12 @@ router.get('/me', auth.authUser, userController.me);
 router.get('/accounts', auth.authAdmin, userController.allAccounts);
 
 
-// Get all Users                
+// Get all Users
 // Staff
 router.get('/accounts/users', auth.authStaff, userController.allUsers);
 
 
-// Get all Staff                
+// Get all Staff
 // Managers
 router.get('/accounts/staff', auth.authManager, userController.allStaff);
 
@@ -54,15 +54,19 @@ router.get('/accounts/staff', auth.authManager, userController.allStaff);
 router.get('/accounts/managers', auth.authManager, userController.allManagers);
 
 
-//router.post('/accounts/admin', userController.allAdmin);
+// Get all Admin
+// Admin
+router.get('/accounts/admin', auth.authAdmin, userController.allAdmins);
 
 
-// Get userAccount by id        
+// Get userAccount by id
 // Admin
 router.get('/accounts/id:', auth.authAdmin, userController.userById);
 
 
-//router.patch('/me', userController.editMe);
+// Modify own data
+// Generally protected
+router.patch('/me', userController.editMe);
 
 
 // Get reset token              √
@@ -74,7 +78,7 @@ router.post('/reset', userController.resetToken);
 router.patch('/reset', auth.authRat, userController.resetPassword);
 
 
-// Delete user by id            
+// Delete user by id
 // Admin
 router.delete('/accounts/id:', auth.authAdmin, userController.delUser);
 

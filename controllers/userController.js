@@ -411,7 +411,7 @@ exports.registerNewUser = (req, res) => {
             // Send token to user
             return res.status(200).json(
               {
-                message: `New ${newUser.userRole} Registeration complete. You can now proceed to login.`
+                message: `New ${newUser.userRole} Registration complete. You can now proceed to login.`
               }
             )
           })
@@ -434,10 +434,21 @@ exports.editMe = async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email
     }
-    let update = await User.findOneAndUpdate(id, edit, {new: true})
-    console.log({success: `Your data has successfully been updated`})
-    res.send({success:`Your data has successfully been updated`, Update: update})
-  } catch {
+    let options = {
+      new: true,
+      returnNewDocument: true
+    }
+    up = await User.findOneAndUpdate(id, edit, options);
+    update = {
+    	_id: up._id,
+    	firstName: up.firstName,
+    	lastName: up.lastName,
+    	email: up.email,
+    	userRole: up.userRole
+    }
+    console.log('\n\n', { success:`Your data has successfully been updated`, details: update }, '\n\n')
+    res.send({success:`Your data has successfully been updated`, details: update})
+  } catch (err) {
     console.log({Error: err})
     res.status(500).json({Error: err})
   }

@@ -62,6 +62,13 @@
       logged-in account in the application. 
       Required header is Authorization: Bearer <logintoken>
 ![mine](models/images/gpr.jpg) 
+> ##### Get own details Route http://localhost:3000/me/
+      This is to Modify the details of the currently
+      logged-in account in the application.
+      Fields that can be modified are firstName, lastName and Email.
+      Required header is Authorization: Bearer <logintoken>
+![mine](models/images/accountLog.jpg)
+![mine](models/images/editMe.jpg)
 > ##### Logout Route http://localhost:3000/logout/
       This is to logout of an account in the application. 
       Required header is Authorization: Bearer <logintoken>

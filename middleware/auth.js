@@ -31,15 +31,13 @@ exports.authUser = (req, res, next) => {
     }
     let token = splitHeader[1]
     const decoded = (jwt.verify(token, SECRET))
-    console.log({here: decoded})
     let id = {_id : decoded.user.id}
     User.findOne(id, (err, found)=> {
       if (err) throw err;
-      console.log({success: `User has successfully been found`, foundUser: found.access})
-      console.log(found.access)
       if (found.access == false) {
          return res.status(401).json({ message: 'Login to gain access'});
       }
+      console.log('\n', {message: `${found.userRole} authentication Successful.`}, '\n')
       next()
     })
   } catch (err) {
